@@ -1,0 +1,8 @@
+{
+  "main.js": "render-page.js",
+  "main.js.map": "render-page.js.map",
+  "static/bao_logo.png": "static/bao_logo-0e7e0a99c92e1ac35f6ce10a702bf566.png",
+  "static/din_alternate_bold.otf": "static/din_alternate_bold-a52d72c38f5e2f9b4498103567fd7300.otf",
+  "static/din_alternate_medium.ttf": "static/din_alternate_medium-4e108eed3072dea4283c213b6c912b26.ttf",
+  "static/footer_border.png": "static/footer_border-7ac8be37e708ec6137f7d723af0b6deb.png"
+}
