@@ -10,9 +10,13 @@ const homeQuery = graphql`
   query {
     takeshape {
       getHomePage {
-        aboutBlurb
-        instagramUrl
-        facebookUrl
+        aboutBlurb {
+          text
+          textColor
+          backgroundColor
+          instagramUrl
+          facebookUrl
+        }
         ourProjectsHeader
         projects {
           name
@@ -22,6 +26,12 @@ const homeQuery = graphql`
           }
           detail
         }
+        mainTextColor
+        background {
+          color
+          image
+          useImage
+        }
       }
     }
   }
@@ -29,14 +39,15 @@ const homeQuery = graphql`
 
 const Main = styled.main`
   width: 100%;
-  background-color: ${Colors.PURPLE};
+  background: ${props =>
+    props.useImage ? `url('${props.background}')` : props.background};
   padding-top: 50px;
   padding-bottom: 150px;
 `;
 
 const Intro = styled.div`
   text-align: center;
-  background-color: ${Colors.TEAL_DARK};
+  background-color: ${props => props.background};
   border-radius: 15px;
   padding: 40px;
   margin: 0 20px 60px;
@@ -150,10 +161,19 @@ class Home extends Component {
     const currentProject = data.projects[currentProjectIndex];
     return (
       <Layout>
-        <Main>
+        <Main
+          background={
+            data.background.useImage
+              ? getImageUrl(data.background.image.path)
+              : data.background.color.hex
+          }
+          useImage={data.background.useImage}
+        >
           <Container>
-            <Intro>
-              <P size="large" color={Colors.WHITE} dark>
+            <Intro
+              background={data.aboutBlurb.backgroundColor.hex || "transparent"}
+            >
+              <P size="large" color={data.aboutBlurb.textColor.hex} dark>
                 {data.aboutBlurb}
               </P>
               <SocialLinks>
@@ -165,13 +185,15 @@ class Home extends Component {
                 </SocialLink>
               </SocialLinks>
             </Intro>
-            <H2 color={Colors.YELLOW}>{data.ourProjectsHeader}</H2>
+            <H2 color={data.mainTextColor.hex}>{data.ourProjectsHeader}</H2>
             <ProjectSelectionSection>
               {data.projects.map((project, index) => (
                 <ProjectSelectionWrapper>
                   <ProjectSelection
                     onClick={() => this.changeProject(index)}
                     active={index === currentProjectIndex}
+                    mainColor={data.mainTextColor.hex}
+                    secondaryColor={}
                   >
                     <P dark>{project.name}</P>
                   </ProjectSelection>
@@ -183,7 +205,7 @@ class Home extends Component {
                 <ProjectImage src={getImageUrl(currentProject.image.path)} />
               </ImageSection>
               <TextSection>
-                <P color={Colors.YELLOW} dark>
+                <P color={data.mainTextColor.hex} dark>
                   {currentProject.detail}
                 </P>
               </TextSection>

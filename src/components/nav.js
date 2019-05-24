@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, StaticQuery, graphql } from "gatsby";
 import styled from "styled-components";
+import { getImageUrl } from "takeshape-routing";
 import { H2, Colors, Container, MediaQueries, Img } from "../style";
 import { baoLogo } from "../images";
 
@@ -8,11 +9,28 @@ const navQuery = graphql`
   query {
     takeshape {
       getNav {
-        subheader
+        subheader {
+          text
+          color {
+            hex
+          }
+        }
+        linkColor {
+          hex
+        }
         links {
           externalLink
           url
           text
+        }
+        background {
+          color {
+            hex
+          }
+          image {
+            path
+          }
+          useImage
         }
       }
     }
@@ -20,7 +38,8 @@ const navQuery = graphql`
 `;
 
 const NavWrapper = styled.nav`
-  background-color: ${Colors.TEAL};
+  background: ${props =>
+    props.useImage ? `url('${props.background}')` : props.background};
   text-align: center;
   padding-top: 60px;
   padding-bottom: 20px;
@@ -58,12 +77,12 @@ const ExternalNavLink = styled.a`
   font-family: DinAlternate;
   font-weight: 400;
   font-size: 24px;
-  color: ${Colors.PURPLE};
+  color: ${props => props.color};
   text-transform: uppercase;
   text-decoration: none;
 
   &:visited {
-    color ${Colors.PURPLE};
+    color ${props => props.color};
   }
 
   ${MediaQueries.small} {
@@ -75,12 +94,12 @@ const InternalNavLink = styled(Link)`
   font-family: DinAlternate;
   font-weight: 400;
   font-size: 24px;
-  color: ${Colors.PURPLE};
+  color: ${props => props.color};
   text-transform: uppercase;
   text-decoration: none;
 
   &:visited {
-    color ${Colors.PURPLE};
+    color ${props => props.color};
   }
 
   ${MediaQueries.small} {
@@ -89,18 +108,29 @@ const InternalNavLink = styled(Link)`
 `;
 
 const Nav = ({ data }) => (
-  <NavWrapper>
+  <NavWrapper
+    background={
+      data.background.useImage
+        ? getImageUrl(data.background.image.path)
+        : data.background.color.hex
+    }
+    useImage={data.background.useImage}
+  >
     <Container>
       <a href="/">
         <Img src={baoLogo} />
       </a>
-      <Subheader color={Colors.WHITE}>{data.subheader}</Subheader>
+      <Subheader color={data.subheader.color.hex}>
+        {data.subheader.text}
+      </Subheader>
       <NavList>
         {data.links.map(link => {
           const LinkTag = link.externalLink ? ExternalNavLink : InternalNavLink;
           return (
             <NavListItem>
-              <LinkTag href={link.url}>{link.text}</LinkTag>
+              <LinkTag href={link.url} color={data.linkColor.hex}>
+                {link.text}
+              </LinkTag>
             </NavListItem>
           );
         })}
