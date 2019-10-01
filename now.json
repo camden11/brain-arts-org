@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "alias": ["www.brain-arts.org"],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "status": 301,
+      "headers": { "Location": "https://brain-arts.org" }
+    }
+  ]
+}
